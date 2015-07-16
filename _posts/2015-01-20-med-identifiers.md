@@ -134,7 +134,7 @@ When an interaction is found, a response is generated with some (fairly basic) d
 			"rxcui":"656659",
 			"name":"bosentan 125 MG Oral Tablet","tty":"SCD"
 		}],
-		"description":"Bosentan may decrease the serum concentration of simvastatin by increasing its metabolism. Monitor for changes in the therapeutic and adverse effects of simvastatin if bosentan is initiated, discontinued or dose changed."}
+		"description":"Bosentan may decrease the serum concentration of simvastatin by increasing its metabolism. Monitor for changes in the therapeutic and adverse effects of simvastatin if bosentan is initiated, discontinued or dose changed."
 	},{
 		"minConcept":[
 		{

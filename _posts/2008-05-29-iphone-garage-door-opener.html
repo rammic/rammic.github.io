@@ -1,0 +1,14 @@
+---
+layout: post
+title: IPhone Garage Door Opener
+date: '2008-05-29T18:50:00.004-05:00'
+author: rammic
+tags:
+- automation
+modified_time: '2008-09-03T17:44:16.267-05:00'
+thumbnail: http://bp1.blogger.com/_wC5IWJgdgwA/SEBMxj5xRXI/AAAAAAAACgc/5mEoOJKTBhw/s72-c/IphoneDoorOpener.png
+blogger_id: tag:blogger.com,1999:blog-6180833599810788176.post-5987879385085014787
+blogger_orig_url: http://blog.rammic.com/2008/05/iphone-garage-door-opener.html
+---
+
+<a onblur="try {parent.deselectBloggerImageGracefully();} catch(e) {}" href="http://bp1.blogger.com/_wC5IWJgdgwA/SEBMxj5xRXI/AAAAAAAACgc/5mEoOJKTBhw/s1600-h/IphoneDoorOpener.png"><img style="float:left; margin:0 10px 10px 0;cursor:pointer; cursor:hand;" src="http://bp1.blogger.com/_wC5IWJgdgwA/SEBMxj5xRXI/AAAAAAAACgc/5mEoOJKTBhw/s320/IphoneDoorOpener.png" border="0" alt="" id="BLOGGER_PHOTO_ID_5206245583575139698" /></a>In a past life I wrote automation controllers for large facilities. Now, I'm obsessed with needlessly automating my house (since it's my first). Thus, I present to you, my latest in ridiculously over-engineered automations:<div><br /></div><div><span class="Apple-style-span" style="font-weight: bold;">The iPhone Garage Door Opener</span></div><div><br /></div><div>Why? Cause it's cool to be able to press a button on my phone and have my garage door open. That, and, I have a horrible habit of leaving my garage door open all night for anyone to access, and now I can create a script to remotely close the door at a given time.</div><div><br /></div><div>The stuff I bought consists of an NPort 16 port serial server (5610, if I remember) and an National Control Devices<a href="http://www.controlanything.com/Merchant2/merchant.mvc?Screen=PROD&amp;Product_Code=ADR45ProXR&amp;Category_Code=CAT_RELAY4_RS232"> ProXR</a> 4 Relay, 8 Input serial controller. To sense state, I included a <a href="http://www.smarthome.com/7455.html">garage door contact sensor</a> with input into the ProXR. </div><div><br /></div><div>On my MacPro, I have Tomcat running with a servlet which responds to the AJAX calls from my little iPhone-customized JSP page. The UI updates every 5 seconds, updating the door state and the current temperature in the garage (since a temperature sensor comes on the ProXR). So now I can use my iPhone to control my garage (which is almost useful)! </div><div><img src="http://lh6.ggpht.com/rammic/SEBQmD5xRYI/AAAAAAAACgk/n_pOTwKlGTM/dooropen.png" /> <img src="http://lh3.ggpht.com/rammic/SEBQ2T5xRZI/AAAAAAAACgs/htYWCXMjrfA/doorclosed.png" /><br /></div><div><br /></div><div><br /></div>

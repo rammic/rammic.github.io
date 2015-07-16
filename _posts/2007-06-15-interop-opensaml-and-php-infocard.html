@@ -1,0 +1,12 @@
+---
+layout: post
+title: Interop (OpenSaml and PHP Infocard)
+date: '2007-06-15T18:56:00.001-05:00'
+author: rammic
+tags: 
+modified_time: '2007-06-20T23:19:51.946-05:00'
+blogger_id: tag:blogger.com,1999:blog-6180833599810788176.post-6826179093512848410
+blogger_orig_url: http://blog.rammic.com/2007/06/interop-opensaml-and-php-infocard.html
+---
+
+What I've had to do so far to get the PHP RP to accept an OpenSAML-created assertion:<br /><br />1) Force namespace prefixes for all SAML elements. The default xmlns values are eventually processed by the PHP code, though are pushed to the end of the element (breaking c14n)<br />2) Turn off the inclusive namespace prefix directives<br />3) Disable all unused namespace declarations. Saml, Samlp, xsd, xsi, and a few others are declared within OpenSAML objects (presumably for flexibility)<br />4) Change the xmlsec encoding of the certificate, which pretty-prints the base64 certificate with various unneeded (but not egregious) whitespace<br />5) ... Eh, I started blogging too late to catch everything. 1-4 are the major changes.<br /><br />It finally works though. These are all bugs with the PHP code so far as I can tell. Why  change the IDP code then? Because it's pretty clear from the few RPs out there that Kim's code has made an impact and is used in many projects. The RP accepts <span style="font-style: italic;">some</span> SAML, and ultimately interoperability comes first.<br /><br />Hopefully he'll take it under advisement for the next revision.

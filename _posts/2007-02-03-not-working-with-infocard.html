@@ -1,0 +1,14 @@
+---
+layout: post
+title: (Not) Working with InfoCard
+date: '2007-02-03T00:12:00.000-05:00'
+author: rammic
+tags:
+- X509V3Credential
+- infocard
+modified_time: '2007-02-03T01:36:13.700-05:00'
+blogger_id: tag:blogger.com,1999:blog-6180833599810788176.post-5123124494498865761
+blogger_orig_url: http://blog.rammic.com/2007/02/not-working-with-infocard.html
+---
+
+So I've got a working STS based on the work provided by the <a href="http://xmldap.blogspot.com/2006/11/sts-is-finally-working.html">XMLDAP</a> code-  great work by the way. Issuing card and pulling user info from an LDAP, I'm really happy about how things are coming together.<br /><br />Now if I can just get X509 authentication working. I've hit <a href="http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=1179519&SiteID=1">a few issues</a> along the way, but the cards are kinda working now- they're at least importing correctly. I'm issuing cards with X509Credential identified with a SHA-1 hash of the certificate I want to use, but the Windows CardSpace client goes brain-dead when trying to find the certificate I specified. I browsed the MSDN forums looking for a solution, and <a href="http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=1034177&amp;SiteID=1">I'm hoping that someone can clear up why this is happening</a>.<br /><br />I'm a bit frustrated at the problems I've been hitting; not because I because I have any expectation of a seamless development/integration process, but because I don't have the ability to examine the CardSpace client. As the de facto reference implementation for identity selectors, not supporting it is simply not an option (my personal admiration for the XMLDAP selector aside).  Perhaps I've just been spoiled by the ability to load open source products into a debugger and figure out why things are breaking, but I <span style="font-style: italic;">hate</span> being hamstrung by an issue that I could likely figure out with a bit more visibility.<br /><br />Please, Microsoft- provide more context and detail on the client logging. A namespace error leading to an entry of "<span id="_ctl0_MainContent_PostFlatView"><span><span style="font-family:Courier New,Courier,Monospace;">Inner Exception: 'None' is an invalid XmlNodeType. Line 1, position 1."</span></span></span> isn't terribly helpful. I realize that this is a V1 release, but this is painful. When attempting to use the corrected card using X509, the client dies with a dialog box stating "<span id="_ctl0_MainContent_PostFlatView"  style="font-family:courier new;"><span>The certificate associated with this card could not be found</span></span>" and not so much as an log entry for an undoubtedly loggable event.

@@ -1,0 +1,15 @@
+---
+layout: post
+title: My IDP Quest...
+date: '2007-02-06T12:04:00.000-05:00'
+author: rammic
+tags:
+- X509V3Credential
+- cardspace client
+- infocard
+modified_time: '2007-02-06T12:17:04.526-05:00'
+blogger_id: tag:blogger.com,1999:blog-6180833599810788176.post-5496602536677054180
+blogger_orig_url: http://blog.rammic.com/2007/02/my-idp-quest.html
+---
+
+I'm still having fun in my IDP quest. I've successfully navigated the X509V3Credential issue thanks to some help from the <a href="http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=1034177&SiteID=1">MSDN board</a> and despite some apparently bad or outdated MS <a href="http://msdn2.microsoft.com/en-us/library/aa967567.aspx">doco</a>.<br /><br />What does that mean? I'm accepting requested along with a client certificate (which I trust), which is then included into the card I issue. When the user selects the card,  the CardSpace client will retrieve the certificate from the appropriate store and use it for authentication back to the IDP. The IDP will retrieve attributes based on the certificate subjectDN from an LDAP, and send them back to the user in a SAML assertion. And then it dies.<br /><br />Why? I'm not including the right WS Security headers in the response, if the CardSpace logging is to be believed. Which ones do I need to include? Got me. I don't know if it's a requirement set by the CardSpace client or by WS-Trust (which I'm admittedly not terribly knowledgeable about), but I'm working on it now. I'm going to review the spec to hopefully find some insight on the problem.

@@ -1,0 +1,12 @@
+---
+layout: post
+title: Long time, no post...
+date: '2007-06-15T17:58:00.001-05:00'
+author: rammic
+tags: 
+modified_time: '2007-06-15T18:22:02.660-05:00'
+blogger_id: tag:blogger.com,1999:blog-6180833599810788176.post-7539235343618721116
+blogger_orig_url: http://blog.rammic.com/2007/06/long-time-no-post.html
+---
+
+Just throwing out notes before I forget.<br /><br />Kim's PHP Infocard implementation appears to have a problem with its canonicalization routine. To demonstrate, let's look at this example assertion element:<br /><br /><span style="font-size:78%;"><span style="font-family:courier new;">&lt;assertion xmlns="urn:oasis:names:tc:SAML:1.0:assertion" assertionid="uuid-1B045A32-5024-B4EB-93AE-0D718C87BC0D" issueinstant="2007-06-15T22:35:05.993Z" issuer="https://xxx" majorversion="1" minorversion="1"&gt;...<br /></span></span><br />Which, in this case, ends up being the spec compliant. The PHP code incorrectly forms:<br /><br /><span style="font-size:78%;"><span style="font-family:courier new;">&lt;assertion assertionid="uuid-1B045A32-5024-B4EB-93AE-0D718C87BC0D" issueinstant="2007-06-15T22:35:05.993Z" issuer="https://xxx" majorversion="1" minorversion="1" xmlns="urn:oasis:names:tc:SAML:1.0:assertion"&gt;</span></span><br /><br />This places the namespace after the attributes, which violates the spec. There are a couple of other little quirks I'm hitting which I'll post as I find them.

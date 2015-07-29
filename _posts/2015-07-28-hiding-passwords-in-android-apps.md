@@ -18,9 +18,13 @@ tags: [android, security, passwords]
 * Disguised/Encrypted Strings
 * Hidden in Native Libraries
 
-### Common Hiding Strategies
+![Phone Disassembly Stock Image](/img/phone-disassembly.jpg)
 
-To help illustrate some of these concepts, I created an example Android app on [Github that we'll analyze in this post.](https://github.com/pillfill/hiding-passwords-android/). The full source code is available for review, but also take a look at [included the decompiled source](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/). It's important that you appreciate the perspective of both the developer **and the reverse-engineer** as you look for potential vulnerabilities.
+-----
+
+## Common Hiding Strategies
+
+To help illustrate some of these concepts, I created an example Android app on [Github that we'll analyze in this post.](https://github.com/pillfill/hiding-passwords-android/) The full source code is available for review, but be sure to also take a look at [the decompiled source](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/). It's important that you appreciate the perspective of both the developer **and the reverse-engineer** as you look for potential vulnerabilities.
 
 #### 0. Including Secrets  in _strings.xml_
   
@@ -46,16 +50,17 @@ $ wget https://github.com/pillfill/hiding-passwords-android/releases/download/1.
   
 {% highlight xml %}
 $ strings app-x86-universal-debug.apk
+  …(Lots of output)
 {% endhighlight %}
 
-  You should see all kinds of interesting outputs here- If you look closely, you'll even see our key/password included:
+  You should see all kinds of interesting values here- If you look closely, you'll even see our key/password included:
   
 {% highlight bash %}
 $ strings app-x86-universal-debug.apk | grep My
     My_S3cr3t_P@$$W0rD
 {% endhighlight %}
   
-  The `strings` command makes smash-and-grab style API key theft very easy. It works nearly everywhere- not just Android apps. 
+  The `strings` command makes smash-and-grab style API key theft very easy. It works on all kinds of binaries- not just Android apps. 
 
 #### 1. Including  Secrets in Your Source Code
 
@@ -68,7 +73,6 @@ $ strings app-x86-universal-debug.apk | grep My
   //A marginally better effort to store a key in a byte array (to avoid string analysis)
   private static final byte[] mySlightlyCleverHidingKey = new byte[]{
     'M','y','_','S','3','c','r','3','t','_','P','@','$','$','W','0','r','D','_','2'
-  };
 {% endhighlight %}
   
   While the `strings` utility won't find these quite as easily as with our XML resources, it still can work with a little more digging. Since APKs are actually compressed/zipped files under the covers, We can extact the APK contents and still find both passwords:
@@ -96,13 +100,13 @@ buildTypes {
 }
 {% endhighlight %}
 
-  [You can then set this value](https://github.com/pillfill/hiding-passwords-android/blob/master/gradle.properties) in a _.gitignore_d `local.properties` (or a checked-in `gradle.properties` as shown here):
+  [You can then set this value](https://github.com/pillfill/hiding-passwords-android/blob/master/gradle.properties) in a .gitignore'd `local.properties` or a checked-in `gradle.properties` as shown here:
   
 {% highlight properties %}
   hiddenPassword=My_S3cr3t_P@$$W0rD
 {% endhighlight %}
 
-  Unfortunately this doesn't improve on the secret-in-source-code situation described above since these values are emitted as `BuildConfig` Java code. It can be inspected and extracted  exactly in the same manner.
+  Unfortunately this doesn't improve on the secret-in-source-code situation described above since these values are emitted as [`BuildConfig` code](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/baseline-decompiled/smali/com/apothesource/hidingpasswords/BuildConfig.smali). It can be inspected and extracted exactly in the same manner.
   
 #### 3. Protecting Secrets with Proguard
 
@@ -117,7 +121,7 @@ buildTypes {
   
   We're already telling proguard to obsfucate all of the code in our package (`com.apothesource.**`). I can also say with confidence that Proguard worked as instructed. So why are we still able to see the passwords?
   
-  Proguard explictily does not do [anything to protect or encrypt strings](http://proguard.sourceforge.net/FAQ.html#encrypt). The reason makes sense too- It can't just change the value of a string that your app depends on without the risk of significant side effects. You can see exactly what proguard did by reviewing the [_mapping.txt_ file in our build output](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/proguard-output/mapping.txt):
+  Proguard explictily does not do [anything to protect or encrypt strings](http://proguard.sourceforge.net/FAQ.html#encrypt). The reason makes sense too- It can't just change the value of a string that your app depends on without the risk of significant side effects. You can see exactly what proguard did by reviewing the [_mapping.txt_ file in our build output](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/proguard-decompiled/proguard-mapping.txt):
   
 {% highlight bash %}
 com.apothesource.hidingpasswords.HidingUtil -> com.apothesource.hidingpasswords.a:
@@ -148,21 +152,16 @@ Proguard Output:
 .field private static final o:[Ljava/lang/String;
 {% endhighlight %}
   
-  Proguard does a good job here of detecting that it can replace variable names and even inline our password to make it a local variable. When you inspect the generated method implementation, though, our password is still there in raw form:
+  Proguard does a good job here of detecting that it can replace variable names and even inline our password to make it a local variable. When you inspect the generated method implementation, though, [our password is still there in raw form](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/proguard-decompiled/smali/com/apothesource/hidingpasswords/MainActivity.smali#L119):
 
 {% highlight smali %}
-
 .method public b(Ljava/lang/String;)V 
-  .locals 3
-  invoke-virtual {p1}, Ljava/lang/String;->getBytes()[B
+  …
   move-result-object v0
-
   const-string v1, "My_S3cr3t_P@$$W0rD"
-
-
 {% endhighlight %}
 
-  While not a silver bullet, Proguard is still an important tool if you intend to prevent reverse engineering. It is highly effective in stripping valuable context (variable, method, and class names) from the compiled output, making detailed analysis *much* more difficult.
+  While not a silver bullet, Proguard is still an important tool if you intend to prevent reverse engineering. It is highly effective in stripping valuable context like variable, method, and class names from the compiled output, making detailed analysis tasks *much* more difficult. If you'd like to compare the decompiled outputs of a proguard vs non-proguard protected application, we've [included both version of our app on Github](https://github.com/pillfill/hiding-passwords-android/tree/master/decompiled).
 
 #### 4. Hiding Your Secret Strings
 
@@ -182,24 +181,6 @@ private static final String[] myCompositeKey = new String[]{
   When you're ready to use your 'hidden' key, [you simply reverse the process](https://github.com/pillfill/hiding-passwords-android/blob/master/app/src/main/java/com/apothesource/hidingpasswords/MainActivity.java#LC114):
 
 {% highlight java %}
-byte[] xorParts0 = Base64.decode(myCompositeKey[0],0);
-byte[] xorParts1 = Base64.decode(myCompositeKey[1], 0);
-
-byte[] compositeKey = new byte[xorParts0.length];
-for(int i = 0; i < xorParts1.length; i++){
-  compositeKey[i] = (byte) (xorParts0[i] ^ xorParts1[i]);
-}
-{% endhighlight %}
-
-  This is a step in the right direction since this effectively neuters the `strings`-based analysis. You're effectively forcing anyone still analyzing your app to now dive deeper- normally this would involve 1) studying your app's compiled output to figure out your hiding scheme, and/or 2) attempting to patch your app. The bad news is that neither is particularly difficult to do.
-
-##### 4a. Studying Smali Output
-
-  [Smali is an assembler/disassembler](https://code.google.com/p/smali/) for Android's dalvik VM. It disassembles compiled Android dex code into a human-readable syntax. Utilities like [APKTool](https://ibotpeaches.github.io/Apktool/) build on smali resulting in a powerful tool to inspect compiled applications, including those from the Google Play Store. 
-
-  Consider our method that combines the [XOR key components](https://github.com/pillfill/hiding-passwords-android/blob/master/app/src/main/java/com/apothesource/hidingpasswords/MainActivity.java#L114):
-
-{% highlight java %}
 public void useXorStringHiding(String myHiddenMessage) {
   byte[] xorParts0 = Base64.decode(myCompositeKey[0],0);
   byte[] xorParts1 = Base64.decode(myCompositeKey[1], 0);
@@ -212,7 +193,13 @@ public void useXorStringHiding(String myHiddenMessage) {
 }
 {% endhighlight %}
 
-  Compare that with the smali [instruction generated from APKTool](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/x86-debug/smali/com/apothesource/hidingpasswords/MainActivity.smali#L136). There are important clues that can quickly indicate our strategy for hiding strings, like our loop to XOR the values:
+  While not terribly clever (or optimized), this is a step in the right direction since this effectively neuters the `strings`-based analysis. This effectively forcing anyone still analyzing your app to now dive deeper, normally involving 1) studying your app's compiled output to figure out your hiding scheme, and/or 2) attempting to patch your app. The bad news is that neither is particularly difficult to do.
+
+##### 4a. Studying Smali Output
+
+  [Smali is an assembler/disassembler](https://code.google.com/p/smali/) for Android's dalvik VM. It disassembles compiled Android dex code into a human-readable syntax. Utilities like [APKTool](https://ibotpeaches.github.io/Apktool/) build on smali resulting in a powerful tool to inspect compiled applications, including those from the Google Play Store. 
+
+  Consider again, for example, our `useXorStringHiding` method that combines the [XOR key components](https://github.com/pillfill/hiding-passwords-android/blob/master/app/src/main/java/com/apothesource/hidingpasswords/MainActivity.java#L114) that we described above. Now compare that with the smali [instruction generated from APKTool](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/proguard-decompiled/smali/com/apothesource/hidingpasswords/MainActivity.smali#L136). There are important clues that can quickly indicate our strategy for hiding strings, like our loop to XOR the values:
 
 {% highlight smali %}
   :goto_0
@@ -237,7 +224,7 @@ public void useXorStringHiding(String myHiddenMessage) {
 
   Let's say I didn't want to or couldn't figure out the encoding scheme by just studying the above output. What other options do I have?
   
-  Plenty. Let's say that we're not able to figure out the above loop, but we are pretty confident that the key we want is [available at the end of the loop](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/x86-debug/smali/com/apothesource/hidingpasswords/MainActivity.smali#L189):
+  Plenty. Let's say that we're not able to figure out the above loop, but we are pretty confident that the key we want is [available at the end of the loop](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/proguard-decompiled/smali/com/apothesource/hidingpasswords/MainActivity.smali#L189):
 
 {% highlight smali %}
   invoke-static {v0, v4, v1}, Lcom/apothesource/hidingpasswords/HidingUtil;->a([B[BZ)V
@@ -268,7 +255,7 @@ public void useXorStringHiding(String myHiddenMessage) {
 
   The [C-source for the function](https://github.com/pillfill/hiding-passwords-android/tree/master/app/src/main/jni/hidingutil) isn't terribly interesting- It's a C-language rehashing of the our same XOR-based Java functions. 
 
-  As expected, decompiling the output [doesn't yield anything useful](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/x86-debug/smali/com/apothesource/hidingpasswords/HidingUtil.smali#L114):
+  As expected, decompiling the output [doesn't yield anything useful](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/proguard-decompiled/smali/com/apothesource/hidingpasswords/HidingUtil.smali#L114):
 
 {% highlight smali %}
 .method public native hide(Ljava/lang/String;)Ljava/lang/String;

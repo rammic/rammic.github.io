@@ -110,7 +110,7 @@ buildTypes {
   
 #### 3. Protecting Secrets with Proguard
 
-  So we're losing the battle with `strings`. Okay, no problem! We can just throw a little *proguard* at our app, have it obsfucate our source code, and it should solve our little `strings` problem. Right?
+  So we're losing the battle with `strings`. Okay, no problem! We can just throw a little *proguard* at our app, have it obfuscate our source code, and it should solve our little `strings` problem. Right?
   
   Not quite. Let's take a look at [proguard-rules.pro in our project](https://github.com/pillfill/hiding-passwords-android/blob/master/app/proguard-rules.pro):
   
@@ -119,9 +119,9 @@ buildTypes {
   -keep class !com.apothesource.** { *; }
 {% endhighlight %}
   
-  We're already telling proguard to obsfucate all of the code in our package (`com.apothesource.**`). I can also say with confidence that Proguard worked as instructed. So why are we still able to see the passwords?
+  We're already telling proguard to obfuscate all of the code in our package (`com.apothesource.**`). I can also say with confidence that Proguard worked as instructed. So why are we still able to see the passwords?
   
-  Proguard explictily does not do [anything to protect or encrypt strings](http://proguard.sourceforge.net/FAQ.html#encrypt). The reason makes sense too- It can't just change the value of a string that your app depends on without the risk of significant side effects. You can see exactly what proguard did by reviewing the [_mapping.txt_ file in our build output](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/proguard-decompiled/proguard-mapping.txt):
+  Proguard explicitly does not do [anything to protect or encrypt strings](http://proguard.sourceforge.net/FAQ.html#encrypt). The reason makes sense too- It can't just change the value of a string that your app depends on without the risk of significant side effects. You can see exactly what proguard did by reviewing the [_mapping.txt_ file in our build output](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/proguard-decompiled/proguard-mapping.txt):
   
 {% highlight bash %}
 com.apothesource.hidingpasswords.HidingUtil -> com.apothesource.hidingpasswords.a:
@@ -230,7 +230,7 @@ public void useXorStringHiding(String myHiddenMessage) {
   invoke-static {v0, v4, v1}, Lcom/apothesource/hidingpasswords/HidingUtil;->a([B[BZ)V
 {% endhighlight %}
 
-  Instead of trying to figure out what permutations we take along the way, we can simply modify the generated instructions to log the [values out to the console at the end](https://stackoverflow.com/questions/12648196/modifying-smali-files). While I won't try to cover all of the niuances of patching binaries here, rest assured that after patching our app with the new logging statement, every key that passes through this method will be dutifully written out to the console, negating all of our hard work.
+  Instead of trying to figure out what permutations we take along the way, we can simply modify the generated instructions to log the [values out to the console at the end](https://stackoverflow.com/questions/12648196/modifying-smali-files). While I won't try to cover all of the nuances of patching binaries here, rest assured that after patching our app with the new logging statement, every key that passes through this method will be dutifully written out to the console, negating all of our hard work.
 
 
 #### 5. Native C/C++ JNI Secret Hiding
@@ -265,7 +265,7 @@ public void useXorStringHiding(String myHiddenMessage) {
 .end method
 {% endhighlight %}
 
-  Our native code compiles into platform-specific _SharedObject_ (or **.so**) libraries. This additional layout of protection comes at a fairly high cost though, especially you're not using JNI hooks already. Builds and testing becomes significantly more complicated and standard troubleshooting/crash analysis tools won't work at this level.
+  Our native code compiles into platform-specific _SharedObject_ (or **.so**) libraries. This additional layer of protection comes at a fairly high cost though, especially you're not using JNI hooks already. Builds and testing becomes significantly more complicated and standard troubleshooting/crash analysis tools won't work at this level.
 
   Even if you are comfortable attaching a JNI interface to your app for this purpose, it's also important to remember that it is still not foolproof. Our naive implementation of the C-functions is vulnerable to the same tool that originally gave us such heartburn initially: `strings`.
 
@@ -280,4 +280,4 @@ $ strings libhidingutil.so | grep My
 
 # Summary
 
-  The best way to protect secrets is to never reveal them. Compartmentalizing sensitive information and operations on your own backend server/service should always be your first choice. If you do have to consider a hiding scheme, you should do so with the realization that you can only make the reverse engineering process harder (i.e. not impossible) and you will add significant complication to the development, testing, and mantenance of your app in doing so.
+  The best way to protect secrets is to never reveal them. Compartmentalizing sensitive information and operations on your own backend server/service should always be your first choice. If you do have to consider a hiding scheme, you should do so with the realization that you can only make the reverse engineering process harder (i.e. not impossible) and you will add significant complication to the development, testing, and maintenance of your app in doing so.

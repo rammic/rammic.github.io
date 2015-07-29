@@ -235,7 +235,7 @@ public void useXorStringHiding(String myHiddenMessage) {
 
 #### 5. Native C/C++ JNI Secret Hiding
 
-  The strategy of moving sensitive operations out of Java and into native libraries was a common mitigation suggested in the /r/androiddev discussion. It certainly is one of the more effective strategies to thwart reverse engineering attempts. To demonstrate this approach, our app includes JNI calls to a C custom function that XORs our keys just like we did in our Java-based implementation. The native/JNI hook is in the [HidingUtil class](https://github.com/pillfill/hiding-passwords-android/blob/master/app/src/main/java/com/apothesource/hidingpasswords/HidingUtil.java#L23):
+  The strategy of moving sensitive operations out of Java and into native libraries was a common mitigation suggested in the /r/androiddev discussion. It certainly is one of the more effective strategies to thwart reverse engineering attempts since it adds several layers of complexity. To demonstrate this approach, our app includes JNI calls to a C custom function that XORs our keys just like we did in our Java-based implementation. The native/JNI hook is in the [HidingUtil class](https://github.com/pillfill/hiding-passwords-android/blob/master/app/src/main/java/com/apothesource/hidingpasswords/HidingUtil.java#L23):
 
 {% highlight java %}
  /**

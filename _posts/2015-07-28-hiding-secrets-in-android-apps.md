@@ -9,7 +9,7 @@ tags: [android, security, passwords]
 
   As a follow up on my [somewhat incoherent rant about developers hiding passwords, keys, and other sensitive information in Android apps](https://www.reddit.com/r/androiddev/comments/3dedaj/dear_android_developer_this_is_an_intervention/), I wanted to go through a semi-realistic example and explain the thought behind some of these strategies and why they may not be as effective as you might initially hope. 
 
-  While not a comprehensive review, we'll take a look at the most common strategies (and how it can go wrong):
+  While not a comprehensive review, we'll take a look at the most common secret-stashing strategies (and how it can go wrong):
 
 * Embedded in strings.xml
 * Hidden in Source Code

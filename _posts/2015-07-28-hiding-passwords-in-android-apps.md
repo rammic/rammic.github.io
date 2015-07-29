@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Hiding Passwords in Android Apps"
+title: "Hiding Secrets in Android Apps"
 description: ""
 category: 
 tags: [android, security, passwords]

@@ -167,7 +167,7 @@ Proguard Output:
 
   Since proguard isn't hiding your strings, why not do it yourself?
   
-  We can hide the secret by transforming it ourselves. In our app, we do this through [some lightweight XOR operations](https://github.com/pillfill/hiding-passwords-android/blob/master/app/src/main/java/com/apothesource/hidingpasswords/MainActivity.java#L114):
+  You can hide secret strings by transforming though various encoding or encrypting methods, [base64](https://en.wikipedia.org/wiki/Base64) being a very common one. In our app, we do this through [some lightweight XOR operations](https://github.com/pillfill/hiding-passwords-android/blob/master/app/src/main/java/com/apothesource/hidingpasswords/MainActivity.java#L114):
   
 {% highlight java %}
 //A more complicated effort to store the XOR'ed halves of a key (instead of the key itself)

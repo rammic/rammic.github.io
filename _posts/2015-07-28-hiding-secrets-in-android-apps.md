@@ -39,7 +39,7 @@ To help illustrate some of these concepts, I created an example Android app on [
   </resources>
 {% endhighlight %}
   
-  While tidy, it's also probably the easiest to subvert and extract. To see how we can do so, start by download our app's APK- [you can download manually from github](https://github.com/pillfill/hiding-passwords-android/releases) or using _wget_ from the command line:
+  While tidy, it's also probably the easiest to subvert and extract. To see how we can do so, start by downloading our app's APK- [you can download manually from github](https://github.com/pillfill/hiding-passwords-android/releases) or using _wget_ from the command line:
   
 {% highlight bash %}
 $ wget https://github.com/pillfill/hiding-passwords-android/releases/download/1.0/app-x86-universal-debug.apk

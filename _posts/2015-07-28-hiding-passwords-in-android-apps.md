@@ -255,7 +255,7 @@ public void useXorStringHiding(String myHiddenMessage) {
 
   The [C-source for the function](https://github.com/pillfill/hiding-passwords-android/tree/master/app/src/main/jni/hidingutil) isn't terribly interesting- It's a C-language rehashing of the our same XOR-based Java functions. 
 
-  As expected, decompiling the output [doesn't yield anything useful](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/proguard-decompiled/smali/com/apothesource/hidingpasswords/HidingUtil.smali#L114):
+  As expected, decompiling the output [doesn't yield anything useful](https://github.com/pillfill/hiding-passwords-android/blob/master/decompiled/proguard-decompiled/smali/com/apothesource/hidingpasswords/a.smali#L105):
 
 {% highlight smali %}
 .method public native hide(Ljava/lang/String;)Ljava/lang/String;
